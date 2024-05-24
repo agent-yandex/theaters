@@ -153,5 +153,39 @@ def delete_theater():
     return "", 204
 
 
+@app.get("/theaters/find_by_title")
+def get_theater_by_title():
+    title = request.args.get("title")
+
+    query = SQL("""
+    select id, title, address, rating
+    from theaters.theater
+    where title ilike {title}
+    """).format(title=Literal("%" + title + "%"))
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+    return result
+
+
+@app.get("/theaters/find_by_address")
+def get_theater_by_address():
+    address = request.args.get("address")
+
+    query = SQL("""
+    select id, title, address, rating
+    from theaters.theater
+    where address ilike {address}
+    """).format(address=Literal("%" + address + "%"))
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+    return result
+
+
 if __name__ == "__main__":
     app.run(port=os.getenv("FLASK_PORT"))
